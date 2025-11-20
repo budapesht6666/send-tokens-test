@@ -6,7 +6,6 @@ export const config = getDefaultConfig({
   appName: 'RainbowKit demo',
   projectId: process.env.NEXT_PUBLIC_RAINBOWKIT_PROJECT_ID ?? '',
   chains: [polygonAmoy, arbitrumSepolia],
-  ssr: true,
   storage: createStorage({
     storage: cookieStorage,
   }),
