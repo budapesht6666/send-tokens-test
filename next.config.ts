@@ -1,9 +1,12 @@
 import type { NextConfig } from 'next';
 
+const isPages = !!process.env.PAGES_BASE_PATH;
+
 const nextConfig: NextConfig = {
-  /* config options here */
   reactCompiler: true,
   output: 'export',
+  basePath: isPages ? '/send-tokens-test' : undefined,
+  assetPrefix: isPages ? '/send-tokens-test/' : undefined,
 };
 
 export default nextConfig;
