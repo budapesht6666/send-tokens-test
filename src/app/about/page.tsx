@@ -10,8 +10,15 @@ export default async function AboutPage() {
         </CardHeader>
         <CardContent className="space-y-3 text-sm sm:text-base">
           <div className="flex items-center justify-between gap-4">
-            <span className="text-muted-foreground">Логин</span>
-            <span className="font-medium break-all">budapesht6666</span>
+            <span className="text-muted-foreground">Resume</span>
+            <a
+              href="https://www.linkedin.com/in/pavel-d-99b26a240"
+              target="_blank"
+              rel="noreferrer"
+              className="font-medium text-primary hover:underline break-all"
+            >
+              linkedin
+            </a>
           </div>
           <div className="flex items-center justify-between gap-4">
             <span className="text-muted-foreground">Telegram</span>
