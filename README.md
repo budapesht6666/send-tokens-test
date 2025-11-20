@@ -1,36 +1,57 @@
-## dApp UI (mobile-first)
+## dApp UI – Send Native Tokens
 
-Проект: Next.js 16 (App Router) + React 19 + Tailwind CSS 4.
+This project is a mobile‑first dApp UI built with **Next.js 16 (App Router)**, **React 19**, and **Tailwind CSS 4**.
 
-Собран базовый мобильный интерфейс: хедер с меню (Sheet), переключатель темы (dark по умолчанию), hero-блок "Lending", KPI-плашки, баннер Rewards и сетка карточек ассетов. Контент — заглушки.
+The main purpose of this app is to **send native tokens on test networks**:
 
-### Запуск
+- `polygonAmoy` testnet
+- `arbitrumSepolia` testnet
+
+Wallet connection and transactions are handled via a RainbowKit / wagmi configuration using these chains (see `src/lib/wagmi.ts`).
+
+### Features
+
+- Mobile‑first layout with header, "Lending" hero block, KPI badges, Rewards banner, and an asset cards grid.
+- Native token send form for supported testnets.
+- Wallet connect button (RainbowKit / wagmi).
+- Dark theme enabled by default with persistent preference in `localStorage` (`ui-theme` key).
+
+### Getting Started
 
 ```bash
 npm install
 npm run dev
 ```
 
-Откройте http://localhost:3000.
+Open `http://localhost:3000` in your browser.
 
-### Переключение темы
+### Theme Switching
 
-Переключатель в правой части хедера. Состояние хранится в localStorage (ключ `ui-theme`). Темная тема активна при первом визите.
+- Theme toggle is located on the right side of the header.
+- The theme provider manages the `dark` class on the `<html>` element.
+- The last selected theme is stored in `localStorage` under the `ui-theme` key; dark theme is active on the first visit.
 
-### Структура ключевых компонентов
+### Key Components & Structure
 
-- `src/components/theme/theme-provider.tsx` — провайдер темы (управляет классом `dark` на `<html>`).
-- `src/components/theme/theme-toggle.tsx` — кнопка-тоггл с иконками Sun/Moon (lucide-react).
-- `src/components/header/mobile-header.tsx` — мобильный хедер, меню внутри `Sheet`.
-- `src/components/ui/*` — примитивы (button, card, switch, sheet) в стиле shadcn упрощённые.
+- `src/components/theme/theme-provider.tsx` – Theme provider that manages the `dark` class on `<html>`.
+- `src/components/theme/theme-toggle.tsx` – Theme toggle button with Sun/Moon icons (`lucide-react`).
+- `src/components/header/mobile-header.tsx` – Mobile header with navigation inside a `Sheet`.
+- `src/components/wallet/custom-connect-button.tsx` – Custom wallet connect button.
+- `src/components/wallet/send-native-token-form.tsx` – Form for sending native tokens on `polygonAmoy` and `arbitrumSepolia`.
+- `src/components/ui/*` – UI primitives (button, card, switch, sheet, etc.) in a simplified shadcn-like style.
+- `src/lib/wagmi.ts` – wagmi / RainbowKit config with `polygonAmoy` and `arbitrumSepolia` chains.
 
-### Кодстайл
+### Code Style
 
-Следуйте правилам из `codestyle.docs.md`: строгая типизация, `cn` из `@/lib/utils`, без any.
+Follow the rules from `codestyle.docs.md`:
 
-### Дальнейшие шаги (предложения)
+- Strict TypeScript typing, no `any`.
+- Use the `cn` helper from `@/lib/utils`.
+- Use the `@/*` path alias configured in `tsconfig.json`.
 
-- Добавить реальные данные и форматирование чисел.
-- Реализовать состояние подключения кошелька (например, RainbowKit / wagmi).
-- Адаптировать десктопную сетку и навигацию.
-- Написать unit-тесты для провайдера темы.
+### Possible Next Steps
+
+- Plug in real asset data and number formatting.
+- Improve validations and UX for the send‑token flow.
+- Extend the desktop layout and navigation.
+- Add unit tests for the theme provider and wallet / send form logic.
