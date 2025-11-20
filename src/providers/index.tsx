@@ -5,6 +5,7 @@ import { WagmiProvider } from 'wagmi';
 import { ThemeProvider } from '@/components/theme/theme-provider';
 import { config } from '@/lib/wagmi';
 import { ThemedRainbowKitProvider } from './ThemedRainbowKitProvider';
+import { ToastProvider } from './ToastProvider';
 
 const queryClient = new QueryClient();
 
@@ -17,6 +18,7 @@ export function Providers({ children }: Props) {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
+          <ToastProvider />
           <ThemedRainbowKitProvider>{children}</ThemedRainbowKitProvider>
         </ThemeProvider>
       </QueryClientProvider>
