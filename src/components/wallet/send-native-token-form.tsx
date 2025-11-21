@@ -1,12 +1,16 @@
 'use client';
 
-import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isAddress, parseEther } from 'viem';
-import { useAccount, useChainId, useWalletClient } from 'wagmi';
-import { arbitrumSepolia, polygonAmoy } from 'wagmi/chains';
+import {
+  BaseError,
+  useAccount,
+  useSendTransaction,
+  useWaitForTransactionReceipt,
+  useWalletClient,
+} from 'wagmi';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -31,9 +35,10 @@ type SendNativeFormValues = z.infer<typeof sendNativeSchema>;
 export function SendNativeTokenForm() {
   const { isConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
-  const chainId = useChainId();
-
-  const [txLink, setTxLink] = useState<string | null>(null);
+  const { data: hash, error, isPending, sendTransaction } = useSendTransaction();
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash,
+  });
 
   const form = useForm<SendNativeFormValues>({
     resolver: zodResolver(sendNativeSchema),
@@ -49,25 +54,12 @@ export function SendNativeTokenForm() {
       return;
     }
 
-    setTxLink(null);
-
     try {
-      const hash = await walletClient.sendTransaction({
-        account: walletClient.account!,
-        chain: walletClient.chain,
+      sendTransaction({
         to: values.to as `0x${string}`,
         value: parseEther(values.amount),
       });
 
-      const explorerBase =
-        chainId === polygonAmoy.id
-          ? polygonAmoy.blockExplorers?.default.url
-          : chainId === arbitrumSepolia.id
-          ? arbitrumSepolia.blockExplorers?.default.url
-          : undefined;
-
-      const link = explorerBase ? `${explorerBase}/tx/${hash}` : hash;
-      setTxLink(link);
       form.reset({
         to: '',
         amount: '',
@@ -80,8 +72,6 @@ export function SendNativeTokenForm() {
     }
   };
 
-  const isSubmitting = form.formState.isSubmitting;
-
   return (
     <div className="mx-auto max-w-md">
       <div className="rounded-xl border bg-card p-6 shadow-sm">
@@ -92,11 +82,11 @@ export function SendNativeTokenForm() {
           </p>
         </div>
 
-        {txLink && (
+        {hash && (
           <div className="mt-4 break-all rounded-md border border-green-200 bg-green-50 p-2 text-xs text-green-700">
             Transaction sent:{' '}
             <a
-              href={txLink}
+              href={`${walletClient?.chain.blockExplorers?.default.url}/tx/${hash}`}
               target="_blank"
               rel="noreferrer"
               className="underline underline-offset-2"
@@ -105,6 +95,8 @@ export function SendNativeTokenForm() {
             </a>
           </div>
         )}
+
+        {error && <div>Error: {(error as BaseError).shortMessage || error.message}</div>}
 
         <Form {...form}>
           <FormProvider {...form}>
@@ -128,13 +120,18 @@ export function SendNativeTokenForm() {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={isSubmitting || !isConnected || !walletClient}
+                disabled={!isConnected || !walletClient || isPending}
               >
-                {isSubmitting ? 'Sending...' : isConnected ? 'Send' : 'Connect wallet'}
+                {isPending ? 'Sending...' : isConnected ? 'Send' : 'Connect wallet'}
               </Button>
             </form>
           </FormProvider>
         </Form>
+
+        <div className="mt-2">
+          {isConfirming && <div>Waiting for confirmation...</div>}
+          {isConfirmed && <div>Transaction confirmed.</div>}
+        </div>
       </div>
     </div>
   );
