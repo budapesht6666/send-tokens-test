@@ -6,7 +6,6 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   output: 'export',
   basePath: pagesBasePath,
-  assetPrefix: pagesBasePath,
 };
 
 export default nextConfig;
