@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next';
 
 const isPages = !!process.env.PAGES_BASE_PATH;
+console.log('process.env.PAGES_BASE_PATH:', process.env.PAGES_BASE_PATH);
 
 const nextConfig: NextConfig = {
   reactCompiler: true,

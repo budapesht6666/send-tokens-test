@@ -6,7 +6,7 @@ export default async function AboutPage() {
       <h1 className="sr-only">About page</h1>
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Контакты</CardTitle>
+          <CardTitle>Contacts:</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm sm:text-base">
           <div className="flex items-center justify-between gap-4">
