@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
-import { getAlchemyHistory } from '@/actions/getAlchemyHistory';
+import { useQuery } from '@tanstack/react-query';
 import { AlchemyTransfer } from '@/actions/types';
-import { toast } from 'sonner';
 import { Address } from 'viem';
+import { fetchAlchemyHistory } from '@/actions/getAlchemyHistory.client';
 
 type UseAlchemyHistoryParams = {
   address?: Address;
@@ -11,34 +10,35 @@ type UseAlchemyHistoryParams = {
 };
 
 export const useAlchemyHistory = ({ address, chainId, isConnected }: UseAlchemyHistoryParams) => {
-  const [transfersLoading, setTransfersLoading] = useState<boolean>(false);
-  const [transfers, setTransfers] = useState<AlchemyTransfer[]>([]);
+  const enabled = Boolean(isConnected && address && chainId);
 
-  useEffect(() => {
-    if (!isConnected || !address || !chainId) return;
-
-    const execute = async () => {
-      setTransfersLoading(true);
-
-      try {
-        const res = await getAlchemyHistory({ address, chainId });
-
-        if ('error' in res) {
-          toast.error(res.error.message);
-          return;
-        }
-
-        setTransfers(res.result.transfers);
-      } catch (error) {
-        console.warn(error);
-        toast.error('Something went wrong ((');
-      } finally {
-        setTransfersLoading(false);
+  const { data, isPending, error } = useQuery<
+    AlchemyTransfer[],
+    Error,
+    AlchemyTransfer[],
+    ['alchemy-history', Address | undefined, number | undefined]
+  >({
+    queryKey: ['alchemy-history', address, chainId],
+    enabled,
+    queryFn: async () => {
+      if (!address || !chainId) {
+        throw new Error('Missing address or chainId');
       }
-    };
 
-    void execute();
-  }, [address, chainId, isConnected]);
+      const res = await fetchAlchemyHistory({ address, chainId });
 
-  return { transfers, transfersLoading };
+      if ('error' in res) {
+        throw new Error(res.error.message);
+      }
+
+      return res.result.transfers;
+    },
+    staleTime: 60_000,
+  });
+
+  return {
+    transfers: data ?? [],
+    transfersLoading: isPending && enabled,
+    error,
+  };
 };
