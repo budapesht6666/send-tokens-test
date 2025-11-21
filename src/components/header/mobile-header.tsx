@@ -7,8 +7,11 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import CustomConnectButton from '../wallet/custom-connect-button';
+import { useRouter } from 'next/navigation';
 
 export function MobileHeader() {
+  const router = useRouter();
+
   return (
     <header
       className={cn(
@@ -34,14 +37,14 @@ export function MobileHeader() {
               <nav className="p-4">
                 <ul className="grid gap-2 text-sm text-muted-foreground">
                   <li>
-                    <Link href="/" aria-label="Home page">
+                    <button className="text-left w-full" onClick={() => router.push('/')}>
                       Send tokens
-                    </Link>
+                    </button>
                   </li>
                   <li>
-                    <Link href="/about" aria-label="About page">
+                    <button className="text-left w-full" onClick={() => router.push('/about')}>
                       About
-                    </Link>
+                    </button>
                   </li>
                 </ul>
               </nav>
