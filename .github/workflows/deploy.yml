@@ -64,6 +64,7 @@ jobs:
         env:
           PAGES_BASE_PATH: ${{ steps.setup_pages.outputs.base_path }}
           NEXT_PUBLIC_RAINBOWKIT_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_RAINBOWKIT_PROJECT_ID }}
+          NEXT_PUBLIC_ALCHEMY_API_KEY: ${{ secrets.NEXT_PUBLIC_ALCHEMY_API_KEY }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
