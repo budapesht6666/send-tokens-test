@@ -39,6 +39,11 @@ export function MobileHeader() {
                     </Link>
                   </li>
                   <li>
+                    <Link href="/history" aria-label="History page">
+                      History
+                    </Link>
+                  </li>
+                  <li>
                     <Link href="/about" aria-label="About page">
                       About
                     </Link>
