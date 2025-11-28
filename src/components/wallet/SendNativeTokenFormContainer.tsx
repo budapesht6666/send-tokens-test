@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { formatUnits, parseEther, parseUnits, type Address } from 'viem';
@@ -27,9 +27,11 @@ import { erc20Abi } from './erc20Abi';
 export function SendNativeTokenFormContainer() {
   const { address, isConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
-  const { data: hash, error, isPending, sendTransaction } = useSendTransaction();
+  const { data: wagmiHash, error, isPending, sendTransaction } = useSendTransaction();
+  const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
+
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash,
+    hash: txHash,
   });
 
   const { data: nativeBalance } = useBalance({
@@ -44,7 +46,6 @@ export function SendNativeTokenFormContainer() {
     address,
     chainId: walletClient?.chain.id,
   });
-  console.log('tokens:', tokens);
 
   const methods = useForm<SendNativeFormValues>({
     resolver: zodResolver(sendNativeSchema),
@@ -77,16 +78,14 @@ export function SendNativeTokenFormContainer() {
           return;
         }
 
-        const txHash = await walletClient.writeContract({
+        const writtenHash = await walletClient.writeContract({
           address: selectedToken.address,
           abi: erc20Abi,
           functionName: 'transfer',
           args: [values.to as Address, parseUnits(values.amount, selectedToken.decimals)],
         });
 
-        toast.success('Transaction sent', {
-          description: txHash,
-        });
+        setTxHash(writtenHash);
       }
 
       reset({
@@ -143,6 +142,10 @@ export function SendNativeTokenFormContainer() {
     }
   }, [getValues, setValue, tokens]);
 
+  useEffect(() => {
+    setTxHash(wagmiHash);
+  }, [wagmiHash]);
+
   return (
     <Form {...methods}>
       <div className="mx-auto max-w-md">
@@ -154,11 +157,11 @@ export function SendNativeTokenFormContainer() {
             </p>
           </div>
 
-          {hash && (
+          {txHash && (
             <div className="mt-4 break-all rounded-md border border-green-200 bg-green-50 p-2 text-xs text-green-700">
               Transaction sent:{' '}
               <a
-                href={`${walletClient?.chain.blockExplorers?.default.url}/tx/${hash}`}
+                href={`${walletClient?.chain.blockExplorers?.default.url}/tx/${txHash}`}
                 target="_blank"
                 rel="noreferrer"
                 className="underline underline-offset-2"
