@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import * as SelectPrimitive from '@radix-ui/react-select';
 import { useFormContext, type UseControllerProps } from 'react-hook-form';
 
 import {
@@ -25,7 +25,7 @@ export type FormSelectOption = {
   disabled?: boolean;
 };
 
-export type FormSelectProps = {
+export type FormSelectProps = React.ComponentProps<typeof SelectPrimitive.Root> & {
   name: string;
   label?: React.ReactNode;
   description?: string;
@@ -35,8 +35,16 @@ export type FormSelectProps = {
   className?: string;
 };
 
-export const FormSelect: React.FC<FormSelectProps> = (props) => {
-  const { name, label, description, rules, placeholder, options, className } = props;
+export const FormSelect = ({
+  name,
+  label,
+  description,
+  rules,
+  placeholder,
+  options,
+  className,
+  disabled,
+}: FormSelectProps) => {
   const { control } = useFormContext();
 
   return (
@@ -48,7 +56,11 @@ export const FormSelect: React.FC<FormSelectProps> = (props) => {
         <FormItem className={className}>
           {label && <FormLabel>{label}</FormLabel>}
           <FormControl>
-            <Select value={field.value} onValueChange={field.onChange} disabled={field.disabled}>
+            <Select
+              value={field.value}
+              onValueChange={field.onChange}
+              disabled={disabled || field.disabled}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder={placeholder} />
               </SelectTrigger>

@@ -27,13 +27,17 @@ type WalletTokenView = {
 
 type SendNativeTokenFormProps = {
   tokens: WalletTokenView[];
+  isTokensLoading: boolean;
   nativeBalance: { symbol: string } | undefined;
   onSetMax: () => void;
 };
 
-export function SendNativeTokenForm(props: SendNativeTokenFormProps) {
-  const { tokens, nativeBalance, onSetMax } = props;
-
+export function SendNativeTokenForm({
+  tokens,
+  isTokensLoading,
+  nativeBalance,
+  onSetMax,
+}: SendNativeTokenFormProps) {
   return (
     <>
       <FormSelect
@@ -47,6 +51,7 @@ export function SendNativeTokenForm(props: SendNativeTokenFormProps) {
             label: `${token.symbol} (${token.balance})`,
           })),
         ]}
+        disabled={isTokensLoading}
       />
 
       <FormInput name="to" label="Recipient address" placeholder="0x..." autoComplete="off" />

@@ -151,7 +151,7 @@ export function SendNativeTokenFormContainer() {
       <div className="mx-auto max-w-md">
         <div className="rounded-xl border bg-card p-6 shadow-sm">
           <div className="space-y-1 text-center">
-            <h2 className="text-lg font-semibold">Send native token</h2>
+            <h2 className="text-lg font-semibold">Send token</h2>
             <p className="text-sm text-muted-foreground">
               Enter recipient address, amount and select a network.
             </p>
@@ -178,6 +178,7 @@ export function SendNativeTokenFormContainer() {
               tokens={tokens}
               nativeBalance={nativeBalance}
               onSetMax={setMaxAmount}
+              isTokensLoading={isTokensLoading}
             />
 
             <Button
