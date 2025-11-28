@@ -1,4 +1,4 @@
-import { SendNativeTokenForm } from '@/components/wallet/send-native-token-form';
+import { SendNativeTokenFormContainer } from '@/components/wallet/SendNativeTokenFormContainer';
 
 export default function Home() {
   return (
@@ -6,7 +6,7 @@ export default function Home() {
       <h1 className="sr-only">Send tokens</h1>
 
       <section className="w-full max-w-xl mx-auto space-y-6">
-        <SendNativeTokenForm />
+        <SendNativeTokenFormContainer />
       </section>
     </div>
   );
