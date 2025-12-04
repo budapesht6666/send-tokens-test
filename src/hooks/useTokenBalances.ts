@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
 import type { Address } from 'viem';
 
-import {
-  fetchAlchemyTokenBalances,
-  type WalletToken,
-} from '@/actions/getAlchemyTokenBalances.client';
+import { fetchAlchemyTokenBalances } from '@/actions/getAlchemyTokenBalances.client';
+import { WalletToken } from '@/actions/types';
 
 type UseTokenBalancesParams = {
   address?: Address;

@@ -1,41 +1,11 @@
 import { chainMapper } from '@/actions/helpers';
 import { formatUnits, type Address } from 'viem';
-
-type GetAlchemyTokenBalancesParams = {
-  chainId: number;
-  address: Address;
-};
-
-type AlchemyTokenBalance = {
-  contractAddress: string;
-  tokenBalance: string;
-};
-
-type AlchemyTokenMetadata = {
-  name: string | null;
-  symbol: string | null;
-  decimals: number | null;
-  logo: string | null;
-};
-
-export type WalletToken = {
-  address: Address;
-  symbol: string;
-  name: string;
-  decimals: number;
-  rawBalance: string;
-  balance: string;
-};
-
-type AlchemyTokenBalancesResponse = {
-  result: {
-    tokenBalances: (AlchemyTokenBalance & { error?: string })[];
-  };
-};
-
-type AlchemyTokenMetadataResponse = {
-  result: AlchemyTokenMetadata;
-};
+import {
+  AlchemyTokenBalancesResponse,
+  AlchemyTokenMetadataResponse,
+  GetAlchemyTokenBalancesParams,
+  WalletToken,
+} from './types';
 
 const apiKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY;
 

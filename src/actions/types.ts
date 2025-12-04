@@ -45,3 +45,41 @@ export type AlchemyErrorType = {
     message: string;
   };
 };
+
+// ==============
+
+export type GetAlchemyTokenBalancesParams = {
+  chainId: number;
+  address: Address;
+};
+
+type AlchemyTokenBalance = {
+  contractAddress: string;
+  tokenBalance: string;
+};
+
+type AlchemyTokenMetadata = {
+  name: string | null;
+  symbol: string | null;
+  decimals: number | null;
+  logo: string | null;
+};
+
+export type WalletToken = {
+  address: Address;
+  symbol: string;
+  name: string;
+  decimals: number;
+  rawBalance: string;
+  balance: string;
+};
+
+export type AlchemyTokenBalancesResponse = {
+  result: {
+    tokenBalances: (AlchemyTokenBalance & { error?: string })[];
+  };
+};
+
+export type AlchemyTokenMetadataResponse = {
+  result: AlchemyTokenMetadata;
+};
