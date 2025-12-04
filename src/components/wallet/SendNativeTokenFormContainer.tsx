@@ -34,7 +34,7 @@ export function SendNativeTokenFormContainer() {
     hash: txHash,
   });
 
-  const { data: nativeBalance } = useBalance({
+  const { data: nativeBalance, refetch: refetchNativeBalance } = useBalance({
     address,
     chainId: walletClient?.chain.id,
     query: {
@@ -42,9 +42,14 @@ export function SendNativeTokenFormContainer() {
     },
   });
 
-  const { tokens, isLoading: isTokensLoading } = useTokenBalances({
+  const {
+    tokens,
+    isLoading: isTokensLoading,
+    refetch: refetchBalances,
+  } = useTokenBalances({
     address,
     chainId: walletClient?.chain.id,
+    isConnected,
   });
 
   const methods = useForm<SendNativeFormValues>({
@@ -145,6 +150,13 @@ export function SendNativeTokenFormContainer() {
   useEffect(() => {
     setTxHash(wagmiHash);
   }, [wagmiHash]);
+
+  useEffect(() => {
+    if (!isConfirmed) return;
+
+    refetchNativeBalance();
+    refetchBalances();
+  }, [isConfirmed, refetchBalances, refetchNativeBalance]);
 
   return (
     <Form {...methods}>

@@ -1,64 +1,52 @@
-import { useEffect, useState } from 'react';
+import { QueryObserverResult, RefetchOptions, useQuery } from '@tanstack/react-query';
 import type { Address } from 'viem';
 
 import { fetchAlchemyTokenBalances } from '@/actions/getAlchemyTokenBalances.client';
-import { WalletToken } from '@/actions/types';
+import type { WalletToken } from '@/actions/types';
 
 type UseTokenBalancesParams = {
   address?: Address;
   chainId?: number;
+  isConnected: boolean;
 };
 
 type UseTokenBalancesResult = {
   tokens: WalletToken[];
   isLoading: boolean;
   isError: boolean;
+  refetch: (options?: RefetchOptions) => Promise<QueryObserverResult<WalletToken[], Error>>;
 };
 
 export function useTokenBalances({
   address,
   chainId,
+  isConnected,
 }: UseTokenBalancesParams): UseTokenBalancesResult {
-  const [tokens, setTokens] = useState<WalletToken[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
+  const enabled = Boolean(isConnected && address && chainId);
 
-  useEffect(() => {
-    if (!address || !chainId) {
-      setTokens([]);
-      return;
-    }
-
-    let cancelled = false;
-
-    const load = async () => {
-      setIsLoading(true);
-      setIsError(false);
-
-      try {
-        const data = await fetchAlchemyTokenBalances({ address, chainId });
-        if (!cancelled) {
-          setTokens(data);
-        }
-      } catch (error) {
-        console.warn('load error:', error);
-        if (!cancelled) {
-          setIsError(true);
-          setTokens([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false);
-        }
+  const { data, isPending, isError, refetch } = useQuery<
+    WalletToken[],
+    Error,
+    WalletToken[],
+    ['alchemy-token-balances', Address | undefined, number | undefined]
+  >({
+    queryKey: ['alchemy-token-balances', address, chainId],
+    enabled,
+    queryFn: async () => {
+      if (!address || !chainId) {
+        throw new Error('Missing address or chainId');
       }
-    };
 
-    void load();
+      const balances = await fetchAlchemyTokenBalances({ address, chainId });
 
-    return () => {
-      cancelled = true;
-    };
-  }, [address, chainId]);
+      return balances;
+    },
+  });
 
-  return { tokens, isLoading, isError };
+  return {
+    tokens: data ?? [],
+    isLoading: isPending && enabled,
+    isError,
+    refetch,
+  };
 }
