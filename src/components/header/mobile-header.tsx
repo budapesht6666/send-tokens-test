@@ -46,6 +46,11 @@ export function MobileHeader() {
                     </Link>
                   </li>
                   <li>
+                    <Link href="/swap" aria-label="Swap page" onClick={handleNavClick}>
+                      Swap
+                    </Link>
+                  </li>
+                  <li>
                     <Link href="/history" aria-label="History page" onClick={handleNavClick}>
                       History
                     </Link>
